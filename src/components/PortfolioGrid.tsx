@@ -57,10 +57,9 @@ export default function PortfolioGrid() {
   }
 
   const fetchProjects = async () => {
-    const supabaseClient = createClient()
-    
     try {
-      const { data, error } = await supabase
+      const supabaseClient = createClient()
+      const { data, error } = await supabaseClient
         .from('portfolio_projects')
         .select('*')
         .order('published', { ascending: false })
@@ -70,13 +69,15 @@ export default function PortfolioGrid() {
 
       if (error) {
         console.error('Error fetching projects:', error)
+        setProjects([])
         return
       }
 
       // Set projects directly - URLs are already complete signed URLs from database
       setProjects(data || [])
     } catch (err) {
-      console.error('Error:', err)
+      console.error('Error fetching projects:', err)
+      setProjects([])
     } finally {
       setLoading(false)
     }

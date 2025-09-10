@@ -1,26 +1,42 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-// Helper function to create client
-export function createClient() {
+// Get Supabase client instance
+export function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Missing Supabase environment variables:', {
+      url: !!supabaseUrl,
+      key: !!supabaseAnonKey
+    })
     throw new Error('Missing Supabase environment variables')
   }
 
   return createSupabaseClient(supabaseUrl, supabaseAnonKey)
 }
 
-// Public client for frontend - lazy initialization
-export const supabase = (() => {
-  try {
-    return createClient()
-  } catch (error) {
-    // Return a mock client during build time
-    return null as any
+// Legacy export for backward compatibility
+export function createClient() {
+  return getSupabaseClient()
+}
+
+// Initialize client safely
+let _supabaseClient: any = null
+
+export const supabase = new Proxy({} as any, {
+  get(target, prop) {
+    if (!_supabaseClient) {
+      try {
+        _supabaseClient = getSupabaseClient()
+      } catch (error) {
+        console.error('Failed to initialize Supabase client:', error)
+        return undefined
+      }
+    }
+    return _supabaseClient[prop]
   }
-})()
+})
 
 // Function to create admin client only when needed (server-side)
 export function createAdminClient() {
