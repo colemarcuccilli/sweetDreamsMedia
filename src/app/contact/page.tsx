@@ -1,8 +1,11 @@
 import ContactForm from '@/components/ContactForm'
+import StickyNav from '@/components/StickyNav'
 
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {/* Navigation */}
+      <StickyNav />
       {/* Hero Section */}
       <div className="relative pt-32 pb-20">
         <div className="absolute inset-0 bg-black/50"></div>

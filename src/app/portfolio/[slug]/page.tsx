@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase'
 import ProjectVideoPlayer from '@/components/ProjectVideoPlayer'
 import ProjectImageGallery from '@/components/ProjectImageGallery'
 import ClientLogo from '@/components/ClientLogo'
+import StickyNav from '@/components/StickyNav'
 
 interface ProjectData {
   id: string
@@ -93,6 +94,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     // Vertical Video Layout - Side by side
     return (
       <main className="min-h-screen bg-black">
+        {/* Navigation */}
+        <StickyNav />
         <div className="flex h-screen">
           {/* Left Side - Vertical Video */}
           <div className="w-1/2 relative bg-black flex items-center justify-center">
@@ -274,6 +277,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   // Standard Horizontal Video Layout
   return (
     <main className="min-h-screen bg-black">
+      {/* Navigation */}
+      <StickyNav />
       {/* Project Video Header */}
       <section className="relative">
         <ProjectVideoPlayer 

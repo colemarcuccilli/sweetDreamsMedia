@@ -1,4 +1,5 @@
 import PortfolioGrid from '@/components/PortfolioGrid'
+import StickyNav from '@/components/StickyNav'
 import Link from 'next/link'
 
 export const metadata = {
@@ -13,6 +14,8 @@ export const metadata = {
 export default function PortfolioPage() {
   return (
     <main className="min-h-screen bg-black">
+      {/* Navigation */}
+      <StickyNav />
       {/* Portfolio Header */}
       <section className="pt-32 pb-16 bg-black">
         <div className="container max-w-6xl mx-auto px-6 text-center">
