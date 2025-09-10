@@ -41,4 +41,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
-*.swo
+*.swoscripts/upload-videos.js
+setup-vercel-env.bat
+*.env*
+!.env.example
