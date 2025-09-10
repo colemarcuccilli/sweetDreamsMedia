@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
     domains: ['fweeyjnqwxywmpmnqpts.supabase.co'],
     formats: ['image/webp', 'image/avif'],
   },
+  experimental: {
+    optimizePackageImports: ['@supabase/supabase-js'],
+  },
 };
 
 export default nextConfig;
