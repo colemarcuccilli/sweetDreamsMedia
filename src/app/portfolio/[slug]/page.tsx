@@ -35,7 +35,7 @@ interface ProjectData {
 
 async function getProject(slug: string): Promise<ProjectData | null> {
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('portfolio_projects')
     .select('*')
@@ -53,7 +53,7 @@ async function getProject(slug: string): Promise<ProjectData | null> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const project = await getProject(slug)
-  
+
   if (!project) {
     return {
       title: 'Project Not Found | Sweet Dreams Production'
@@ -82,7 +82,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   // Detect if main video is vertical
   const isVerticalVideo = project.video_url && (
-    project.title.toLowerCase().includes('vertical') || 
+    project.title.toLowerCase().includes('vertical') ||
     project.title.toLowerCase().includes('sliced by sonny') ||
     project.title.toLowerCase().includes('snob') ||
     project.video_url.includes('877826bd010c5e4a495de0b8f125c8a5') || // Sliced By Sonny
@@ -91,177 +91,176 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   )
 
   if (isVerticalVideo) {
-    // Vertical Video Layout - Side by side
+    // Vertical Video Layout - Centered and clean
     return (
       <main className="min-h-screen bg-black">
         {/* Navigation */}
         <StickyNav />
-        <div className="flex h-screen">
-          {/* Left Side - Vertical Video */}
-          <div className="w-1/2 relative bg-black flex items-center justify-center">
-            <div className="relative h-full w-full max-w-md mx-auto">
-              <iframe
-                src={project.video_url}
-                className="w-full h-full"
-                style={{ 
-                  border: 'none',
-                  aspectRatio: '9/16',
-                }}
-                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                allowFullScreen={false}
-              />
-              
-              {/* Video Overlay Controls */}
-              <div className="absolute top-6 right-6">
-                <div className="bg-black/80 text-white px-3 py-2 text-sm rounded-full">
-                  Vertical Video
+
+        {/* Project Header */}
+        <section className="pt-24 pb-8 bg-black">
+          <div className="container max-w-6xl mx-auto px-6">
+            {/* Back to Portfolio */}
+            <div className="mb-8">
+              <Link
+                href="/portfolio"
+                className="inline-flex items-center text-gray-400 hover:text-gold transition-colors duration-300"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Portfolio
+              </Link>
+            </div>
+
+            {/* Title and Description */}
+            <div className="text-center mb-8">
+              <div className="flex justify-center items-center gap-4 mb-4">
+                <span className="bg-gold text-black px-3 py-1 text-sm font-semibold rounded-sm">
+                  {project.category}
+                </span>
+                <span className="bg-purple-600 text-white px-3 py-1 text-sm font-semibold rounded-sm">
+                  VERTICAL
+                </span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-playfair font-bold text-white mb-4">
+                {project.title}
+              </h1>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                {project.short_description}
+              </p>
+            </div>
+
+            {/* Vertical Video Player - Centered */}
+            <div className="flex justify-center mb-12">
+              <div className="w-full max-w-sm">
+                <div className="relative aspect-[9/16] bg-black rounded-lg overflow-hidden shadow-2xl">
+                  <iframe
+                    src={(() => {
+                      // Extract video ID and build proper stream URL
+                      const videoId = project.video_url.match(/([a-f0-9]{32})/)?.[1]
+                      if (videoId) {
+                        return `https://iframe.videodelivery.net/${videoId}?poster=${encodeURIComponent(project.thumbnail_url || '')}&controls=true&muted=false&autoplay=true&loop=false&preload=auto`
+                      }
+                      return project.video_url + '?controls=true&muted=false&autoplay=true&loop=false&preload=auto'
+                    })()}
+                    className="absolute inset-0 w-full h-full"
+                    style={{ border: 'none' }}
+                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+                    allowFullScreen={true}
+                    title={project.title}
+                  />
                 </div>
+
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Right Side - Project Content */}
-          <div className="w-1/2 overflow-y-auto">
-            <div className="p-8 lg:p-12">
-              {/* Back to Portfolio */}
-              <div className="mb-8">
-                <Link 
-                  href="/portfolio" 
-                  className="inline-flex items-center text-gray-400 hover:text-gold transition-colors duration-300"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Back to Portfolio
-                </Link>
-              </div>
-
-              {/* Project Header */}
-              <div className="mb-8">
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="bg-gold text-black px-3 py-1 text-sm font-semibold rounded-sm">
-                    {project.category}
-                  </span>
-                  <span className="bg-purple-600 text-white px-3 py-1 text-sm font-semibold rounded-sm">
-                    VERTICAL FORMAT
-                  </span>
-                  {project.featured && (
-                    <span className="bg-gray-800 text-gold px-3 py-1 text-sm font-semibold rounded-sm">
-                      FEATURED
-                    </span>
-                  )}
-                </div>
-                
-                <h1 className="text-3xl lg:text-4xl font-playfair font-bold text-white mb-4">
-                  {project.title}
-                </h1>
-                
-                <p className="text-lg text-gray-300 leading-relaxed mb-6">
-                  {project.short_description}
-                </p>
-
-                {/* Client Info */}
-                <div className="flex items-center gap-4 mb-6">
-                  {project.client_logo_url && (
-                    <img
-                      src={project.client_logo_url}
-                      alt={`${project.client_name} logo`}
-                      className="w-12 h-12 object-contain rounded bg-white/10 p-2"
-                    />
-                  )}
-                  <div>
-                    <p className="text-gold font-semibold">{project.client_name}</p>
-                    <p className="text-gray-400 text-sm">{project.location}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Project Details Grid */}
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div>
-                  <h3 className="text-gold font-semibold mb-2">Purpose</h3>
-                  <p className="text-gray-300 text-sm">{project.purpose}</p>
-                </div>
-                <div>
-                  <h3 className="text-gold font-semibold mb-2">Category</h3>
-                  <p className="text-gray-300 text-sm">{project.category}</p>
-                </div>
-                {project.project_date && (
-                  <div>
-                    <h3 className="text-gold font-semibold mb-2">Year</h3>
-                    <p className="text-gray-300 text-sm">{new Date(project.project_date).getFullYear()}</p>
-                  </div>
-                )}
-                <div>
-                  <h3 className="text-gold font-semibold mb-2">Format</h3>
-                  <p className="text-gray-300 text-sm">9:16 Vertical</p>
-                </div>
-              </div>
-
-              {/* Services */}
-              <div className="mb-8">
-                <h3 className="text-gold font-semibold mb-3">Services</h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.services.map((service, index) => (
-                    <span 
-                      key={index}
-                      className="bg-gray-800 text-gray-300 px-3 py-1 text-sm rounded-sm"
-                    >
-                      {service}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Full Description */}
-              <div className="mb-8">
-                <h2 className="text-xl font-playfair font-bold text-white mb-4">Project Overview</h2>
-                <div className="prose prose-invert prose-sm max-w-none">
+        {/* Project Details */}
+        <section className="pb-16 bg-black">
+          <div className="container max-w-6xl mx-auto px-6">
+            <div className="grid lg:grid-cols-3 gap-12">
+              {/* Main Content */}
+              <div className="lg:col-span-2">
+                {/* Full Description */}
+                <div className="mb-8">
+                  <h2 className="text-2xl font-playfair font-bold text-white mb-4">Project Overview</h2>
                   <p className="text-gray-300 leading-relaxed whitespace-pre-line">
                     {project.full_description}
                   </p>
                 </div>
+
+                {/* Services */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-playfair font-bold text-white mb-3">Services</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.services.map((service, index) => (
+                      <span
+                        key={index}
+                        className="bg-gray-800 text-gray-300 px-3 py-1 text-sm rounded-sm"
+                      >
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Results/Metrics */}
+                {project.results_metrics && (
+                  <div className="mb-8 bg-gray-900 p-6 rounded-lg">
+                    <h2 className="text-xl font-playfair font-bold text-white mb-3">Results</h2>
+                    <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+                      {project.results_metrics}
+                    </p>
+                  </div>
+                )}
+
+                {/* Client Testimonial */}
+                {project.testimonial && (
+                  <div className="mb-8 border-l-4 border-gold pl-6">
+                    <blockquote className="text-gray-300 italic mb-3">
+                      "{project.testimonial}"
+                    </blockquote>
+                    {project.testimonial_author && (
+                      <cite className="text-gold font-semibold">
+                        — {project.testimonial_author}
+                      </cite>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Results/Metrics */}
-              {project.results_metrics && (
-                <div className="mb-8 bg-gray-900 p-6 rounded-lg">
-                  <h2 className="text-xl font-playfair font-bold text-white mb-3">Results</h2>
-                  <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
-                    {project.results_metrics}
-                  </p>
-                </div>
-              )}
-
-              {/* Client Testimonial */}
-              {project.testimonial && (
-                <div className="mb-8 border-l-4 border-gold pl-6">
-                  <blockquote className="text-gray-300 italic mb-3">
-                    "{project.testimonial}"
-                  </blockquote>
-                  {project.testimonial_author && (
-                    <cite className="text-gold font-semibold text-sm">
-                      — {project.testimonial_author}
-                    </cite>
+              {/* Sidebar */}
+              <div className="lg:col-span-1">
+                <div className="bg-gray-900 p-6 rounded-lg sticky top-24">
+                  {/* Client Info */}
+                  {project.client_logo_url && (
+                    <div className="mb-6 text-center">
+                      <ClientLogo
+                        logoUrl={project.client_logo_url}
+                        clientName={project.client_name}
+                        websiteUrl={project.client_website_url}
+                      />
+                    </div>
                   )}
-                </div>
-              )}
 
-              {/* CTA */}
-              <div className="mt-8 pt-8 border-t border-gray-800">
-                <h3 className="text-white font-semibold mb-4">Ready to Get Noticed?</h3>
-                <Link 
-                  href="/contact"
-                  className="block w-full bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 rounded-sm text-center transition-all duration-300"
-                >
-                  Let's Create
-                </Link>
+                  {/* Project Meta */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-gold font-semibold mb-1">Client</h3>
+                      <p className="text-white">{project.client_name}</p>
+                    </div>
+                    <div>
+                      <h3 className="text-gold font-semibold mb-1">Purpose</h3>
+                      <p className="text-gray-300">{project.purpose}</p>
+                    </div>
+                    <div>
+                      <h3 className="text-gold font-semibold mb-1">Category</h3>
+                      <p className="text-gray-300">{project.category}</p>
+                    </div>
+                    <div>
+                      <h3 className="text-gold font-semibold mb-1">Location</h3>
+                      <p className="text-gray-300">{project.location}</p>
+                    </div>
+                    {project.project_date && (
+                      <div>
+                        <h3 className="text-gold font-semibold mb-1">Year</h3>
+                        <p className="text-gray-300">{new Date(project.project_date).getFullYear()}</p>
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="text-gold font-semibold mb-1">Format</h3>
+                      <p className="text-gray-300">9:16 Vertical</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Gallery Section - Full Width Below */}
+        {/* Gallery Section */}
         {project.additional_images && project.additional_images.length > 0 && (
           <section className="py-16 bg-gray-950">
             <div className="container max-w-6xl mx-auto px-6">
@@ -270,6 +269,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </div>
           </section>
         )}
+
+        {/* CTA Section */}
+        <section className="py-16 bg-black border-t border-gray-900">
+          <div className="container max-w-6xl mx-auto px-6 text-center">
+            <h3 className="text-2xl font-playfair font-bold text-white mb-4">Ready to Get Noticed?</h3>
+            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+              Let's create compelling vertical content that captures attention and drives engagement.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-block bg-gold hover:bg-gold/90 text-black font-semibold px-8 py-4 rounded-sm transition-all duration-300"
+            >
+              Start Your Project
+            </Link>
+          </div>
+        </section>
       </main>
     )
   }
@@ -279,22 +294,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     <main className="min-h-screen bg-black">
       {/* Navigation */}
       <StickyNav />
-      {/* Project Video Header */}
-      <section className="relative">
-        <ProjectVideoPlayer 
-          videoUrl={project.video_url}
-          title={project.title}
-          thumbnailUrl={project.thumbnail_url}
-        />
-      </section>
 
-      {/* Project Details */}
-      <section className="py-16 bg-black">
+      {/* Project Header Section */}
+      <section className="pt-24 pb-12 bg-black">
         <div className="container max-w-6xl mx-auto px-6">
           {/* Back to Portfolio */}
           <div className="mb-8">
-            <Link 
-              href="/portfolio" 
+            <Link
+              href="/portfolio"
               className="inline-flex items-center text-gray-400 hover:text-gold transition-colors duration-300"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,31 +311,58 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </Link>
           </div>
 
+          {/* Project Title and Meta */}
+          <div className="mb-8">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="bg-gold text-black px-3 py-1 text-sm font-semibold rounded-sm">
+                {project.category}
+              </span>
+              {project.featured && (
+                <span className="bg-gray-800 text-gold px-3 py-1 text-sm font-semibold rounded-sm">
+                  FEATURED
+                </span>
+              )}
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-playfair font-bold text-white mb-4">
+              {project.title}
+            </h1>
+
+            <p className="text-xl text-gray-300 leading-relaxed max-w-3xl">
+              {project.short_description}
+            </p>
+          </div>
+
+          {/* Video Player - Direct Cloudflare Stream Embed */}
+          <div className="mb-12">
+            <div className="w-full aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
+              <iframe
+                src={(() => {
+                  // Extract video ID and build proper stream URL
+                  const videoId = project.video_url.match(/([a-f0-9]{32})/)?.[1]
+                  if (videoId) {
+                    return `https://iframe.videodelivery.net/${videoId}?poster=${encodeURIComponent(project.thumbnail_url || '')}&controls=true&muted=false&autoplay=true&loop=false&preload=auto`
+                  }
+                  return project.video_url + '?controls=true&muted=false&autoplay=true&loop=false&preload=auto'
+                })()}
+                className="w-full h-full"
+                style={{ border: 'none' }}
+                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+                allowFullScreen={true}
+                title={project.title}
+              />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Project Details */}
+      <section className="pb-16 bg-black">
+        <div className="container max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              {/* Project Header */}
-              <div className="mb-8">
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="bg-gold text-black px-3 py-1 text-sm font-semibold rounded-sm">
-                    {project.category}
-                  </span>
-                  {project.featured && (
-                    <span className="bg-gray-800 text-gold px-3 py-1 text-sm font-semibold rounded-sm">
-                      FEATURED
-                    </span>
-                  )}
-                </div>
-                
-                <h1 className="text-4xl md:text-5xl font-playfair font-bold text-white mb-4">
-                  {project.title}
-                </h1>
-                
-                <p className="text-xl text-gray-300 leading-relaxed">
-                  {project.short_description}
-                </p>
-              </div>
-
               {/* Full Description */}
               <div className="mb-12">
                 <h2 className="text-2xl font-playfair font-bold text-white mb-4">Project Overview</h2>
@@ -388,7 +422,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 {/* Client Logo */}
                 {project.client_logo_url && (
                   <div className="mb-8 text-center">
-                    <ClientLogo 
+                    <ClientLogo
                       logoUrl={project.client_logo_url}
                       clientName={project.client_name}
                       websiteUrl={project.client_website_url}
@@ -402,9 +436,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                     <h3 className="text-gold font-semibold mb-2">Client</h3>
                     <p className="text-white">
                       {project.client_website_url ? (
-                        <a 
-                          href={project.client_website_url} 
-                          target="_blank" 
+                        <a
+                          href={project.client_website_url}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="hover:text-gold transition-colors duration-300"
                         >
@@ -422,17 +456,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   </div>
 
                   <div>
-                    <h3 className="text-gold font-semibold mb-2">Services</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {project.services.map((service, index) => (
-                        <span 
-                          key={index}
-                          className="bg-gray-800 text-gray-300 px-3 py-1 text-sm rounded-sm"
-                        >
-                          {service}
-                        </span>
-                      ))}
-                    </div>
+                    <h3 className="text-gold font-semibold mb-2">Category</h3>
+                    <p className="text-gray-300">{project.category}</p>
                   </div>
 
                   <div>
@@ -440,34 +465,35 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                     <p className="text-gray-300">{project.location}</p>
                   </div>
 
-                  <div>
-                    <h3 className="text-gold font-semibold mb-2">Category</h3>
-                    <p className="text-gray-300">{project.category}</p>
-                  </div>
-
                   {project.project_date && (
                     <div>
-                      <h3 className="text-gold font-semibold mb-2">Project Date</h3>
+                      <h3 className="text-gold font-semibold mb-2">Year</h3>
                       <p className="text-gray-300">{new Date(project.project_date).getFullYear()}</p>
                     </div>
                   )}
 
-                  {project.budget_range && (
-                    <div>
-                      <h3 className="text-gold font-semibold mb-2">Investment Range</h3>
-                      <p className="text-gray-300">{project.budget_range}</p>
+                  <div>
+                    <h3 className="text-gold font-semibold mb-2">Services</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {project.services.map((service, index) => (
+                        <span
+                          key={index}
+                          className="bg-gray-800 text-gray-300 px-2 py-1 text-xs rounded-sm"
+                        >
+                          {service}
+                        </span>
+                      ))}
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {/* CTA */}
-                <div className="mt-8 pt-8 border-t border-gray-800">
-                  <h3 className="text-white font-semibold mb-4">Ready to Get Noticed?</h3>
-                  <Link 
+                {/* CTA Button */}
+                <div className="mt-8 pt-6 border-t border-gray-800">
+                  <Link
                     href="/contact"
                     className="block w-full bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 rounded-sm text-center transition-all duration-300"
                   >
-                    Let's Create
+                    Start Your Project
                   </Link>
                 </div>
               </div>

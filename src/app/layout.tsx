@@ -74,27 +74,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      {/* Google Analytics */}
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-GVMKX38S4M"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-GVMKX38S4M');
-        `}
-      </Script>
+      <body className={`${inter.className} bg-black text-white antialiased min-h-screen`}>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-GVMKX38S4M"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-GVMKX38S4M');
+          `}
+        </Script>
 
-      {/* Structured Data for Local Business */}
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+        {/* Structured Data for Local Business */}
+        <Script
+          id="structured-data"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             "name": "Sweet Dreams Production",
@@ -152,7 +153,6 @@ export default function RootLayout({
         }}
       />
 
-      <body className={`${inter.className} bg-black text-white antialiased min-h-screen`}>
         <div className="relative">
           {/* Subtle grain texture overlay */}
           <div className="fixed inset-0 opacity-5 pointer-events-none z-0 bg-noise" />

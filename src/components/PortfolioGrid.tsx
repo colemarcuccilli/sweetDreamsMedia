@@ -73,8 +73,76 @@ export default function PortfolioGrid() {
         return
       }
 
-      // Set projects directly - URLs are already complete signed URLs from database
-      setProjects(data || [])
+      // Add coming soon projects
+      const comingSoonProjects: PortfolioProject[] = [
+        {
+          id: 'coming-soon-1',
+          title: 'Prime Dealer Fund Commercial',
+          slug: 'prime-dealer-fund-commercial',
+          category: 'Commercial',
+          client_name: 'Prime Dealer Fund',
+          client: 'Prime Dealer Fund',
+          thumbnail_url: '/api/placeholder/600/400?text=Prime+Dealer+Fund',
+          video_url: '',
+          short_description: 'Commercial video production for Prime Dealer Fund showcasing their investment solutions.',
+          description: 'Commercial video production for Prime Dealer Fund showcasing their investment solutions.',
+          full_description: 'Commercial video production for Prime Dealer Fund showcasing their investment solutions.',
+          services: ['Commercial Production', 'Video Marketing'],
+          location: 'Indiana',
+          project_date: new Date().toISOString(),
+          purpose: 'Marketing',
+          featured: false,
+          published: false,
+          client_logo_url: null,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'coming-soon-2',
+          title: 'Jet Pro Pilots Commercial',
+          slug: 'jet-pro-pilots-commercial',
+          category: 'Commercial',
+          client_name: 'Jet Pro Pilots',
+          client: 'Jet Pro Pilots',
+          thumbnail_url: '/api/placeholder/600/400?text=Jet+Pro+Pilots',
+          video_url: '',
+          short_description: 'Professional commercial highlighting Jet Pro Pilots aviation services and expertise.',
+          description: 'Professional commercial highlighting Jet Pro Pilots aviation services and expertise.',
+          full_description: 'Professional commercial highlighting Jet Pro Pilots aviation services and expertise.',
+          services: ['Commercial Production', 'Aviation Content'],
+          location: 'Indiana',
+          project_date: new Date().toISOString(),
+          purpose: 'Marketing',
+          featured: false,
+          published: false,
+          client_logo_url: null,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'coming-soon-3',
+          title: 'IU Dental Research Project',
+          slug: 'iu-dental-research-project',
+          category: 'Educational',
+          client_name: 'Indiana University',
+          client: 'Indiana University',
+          thumbnail_url: '/api/placeholder/600/400?text=IU+Dental+Research',
+          video_url: '',
+          short_description: 'Educational video content for Indiana University dental research initiatives.',
+          description: 'Educational video content for Indiana University dental research initiatives.',
+          full_description: 'Educational video content for Indiana University dental research initiatives.',
+          services: ['Educational Content', 'Research Documentation'],
+          location: 'Indiana',
+          project_date: new Date().toISOString(),
+          purpose: 'Education',
+          featured: false,
+          published: false,
+          client_logo_url: null,
+          created_at: new Date().toISOString()
+        }
+      ]
+
+      // Combine database projects with coming soon projects
+      const allProjects = [...(data || []), ...comingSoonProjects]
+      setProjects(allProjects)
     } catch (err) {
       console.error('Error fetching projects:', err)
       setProjects([])
