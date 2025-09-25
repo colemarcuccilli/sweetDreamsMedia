@@ -9,13 +9,34 @@ interface ProjectImageGalleryProps {
 
 export default function ProjectImageGallery({ images, title }: ProjectImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [isImageLoading, setIsImageLoading] = useState(false)
 
   const openLightbox = (imageUrl: string) => {
     setSelectedImage(imageUrl)
+    setIsImageLoading(true)
   }
 
   const closeLightbox = () => {
     setSelectedImage(null)
+    setIsImageLoading(false)
+  }
+
+  const handleImageLoad = () => {
+    setIsImageLoading(false)
+  }
+
+  // Create optimized thumbnail URL for Supabase images
+  const getThumbnailUrl = (imageUrl: string) => {
+    if (!imageUrl.includes('supabase.co')) return imageUrl
+
+    // Use Supabase's transform API for thumbnails
+    // This creates a 400px wide thumbnail to load quickly
+    return imageUrl + '?width=400&quality=75'
+  }
+
+  // Get full quality URL (original image)
+  const getFullQualityUrl = (imageUrl: string) => {
+    return imageUrl // Original full quality
   }
 
   const isVideo = (url: string) => {
@@ -78,9 +99,10 @@ export default function ProjectImageGallery({ images, title }: ProjectImageGalle
               ) : (
                 <>
                   <img
-                    src={mediaUrl}
+                    src={getThumbnailUrl(mediaUrl)}
                     alt={`${title} - Image ${index + 1}`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
                   />
                   {/* Image Zoom Icon */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
@@ -127,12 +149,22 @@ export default function ProjectImageGallery({ images, title }: ProjectImageGalle
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
-              <img
-                src={selectedImage}
-                alt={`${title} - Full size`}
-                className="max-w-full max-h-full object-contain"
-                onClick={(e) => e.stopPropagation()}
-              />
+              <div className="relative">
+                {/* Loading spinner */}
+                {isImageLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div>
+                  </div>
+                )}
+                <img
+                  src={getFullQualityUrl(selectedImage)}
+                  alt={`${title} - Full size`}
+                  className="max-w-full max-h-full object-contain"
+                  onClick={(e) => e.stopPropagation()}
+                  onLoad={handleImageLoad}
+                  style={{ opacity: isImageLoading ? 0.3 : 1 }}
+                />
+              </div>
             )}
           </div>
 

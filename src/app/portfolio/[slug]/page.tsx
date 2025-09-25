@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import ProjectVideoPlayer from '@/components/ProjectVideoPlayer'
 import ProjectImageGallery from '@/components/ProjectImageGallery'
+import ProjectVideosSection from '@/components/ProjectVideosSection'
 import ClientLogo from '@/components/ClientLogo'
 import StickyNav from '@/components/StickyNav'
 
@@ -134,24 +135,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             {/* Vertical Video Player - Centered */}
             <div className="flex justify-center mb-12">
               <div className="w-full max-w-sm">
-                <div className="relative aspect-[9/16] bg-black rounded-lg overflow-hidden shadow-2xl">
-                  <iframe
-                    src={(() => {
-                      // Extract video ID and build proper stream URL
-                      const videoId = project.video_url.match(/([a-f0-9]{32})/)?.[1]
-                      if (videoId) {
-                        return `https://iframe.videodelivery.net/${videoId}?poster=${encodeURIComponent(project.thumbnail_url || '')}&controls=true&muted=false&autoplay=true&loop=false&preload=auto`
-                      }
-                      return project.video_url + '?controls=true&muted=false&autoplay=true&loop=false&preload=auto'
-                    })()}
-                    className="absolute inset-0 w-full h-full"
-                    style={{ border: 'none' }}
-                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
-                    allowFullScreen={true}
+                <div className="aspect-[9/16]">
+                  <ProjectVideoPlayer
+                    videoUrl={project.video_url}
                     title={project.title}
+                    thumbnailUrl={project.thumbnail_url || undefined}
+                    isMain={true}
                   />
                 </div>
-
               </div>
             </div>
           </div>
@@ -324,183 +315,184 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               )}
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-playfair font-bold text-white mb-4">
-              {project.title}
-            </h1>
+            {/* Title with Client Logo */}
+            <div className="flex items-center gap-6 mb-4">
+              <h1 className="text-4xl md:text-6xl font-playfair font-bold text-white">
+                {project.title}
+              </h1>
+              {project.client_logo_url && (
+                <img
+                  src={project.client_logo_url}
+                  alt={`${project.client_name} logo`}
+                  className="h-16 md:h-20 w-auto opacity-90"
+                />
+              )}
+            </div>
 
             <p className="text-xl text-gray-300 leading-relaxed max-w-3xl">
               {project.short_description}
             </p>
           </div>
 
-          {/* Video Player - Direct Cloudflare Stream Embed */}
+          {/* Main Video Player */}
           <div className="mb-12">
-            <div className="w-full aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
-              <iframe
-                src={(() => {
-                  // Extract video ID and build proper stream URL
-                  const videoId = project.video_url.match(/([a-f0-9]{32})/)?.[1]
-                  if (videoId) {
-                    return `https://iframe.videodelivery.net/${videoId}?poster=${encodeURIComponent(project.thumbnail_url || '')}&controls=true&muted=false&autoplay=true&loop=false&preload=auto`
-                  }
-                  return project.video_url + '?controls=true&muted=false&autoplay=true&loop=false&preload=auto'
-                })()}
-                className="w-full h-full"
-                style={{ border: 'none' }}
-                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
-                allowFullScreen={true}
-                title={project.title}
-              />
-            </div>
-
+            <ProjectVideoPlayer
+              videoUrl={project.video_url}
+              title={project.title}
+              thumbnailUrl={project.thumbnail_url || undefined}
+              isMain={true}
+            />
           </div>
-        </div>
-      </section>
 
-      {/* Project Details */}
-      <section className="pb-16 bg-black">
-        <div className="container max-w-6xl mx-auto px-6">
-          <div className="grid lg:grid-cols-3 gap-12">
-            {/* Main Content */}
-            <div className="lg:col-span-2">
-              {/* Full Description */}
-              <div className="mb-12">
-                <h2 className="text-2xl font-playfair font-bold text-white mb-4">Project Overview</h2>
-                <div className="prose prose-invert max-w-none">
-                  <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-                    {project.full_description}
-                  </p>
-                </div>
+          {/* Project Info - Horizontal Layout */}
+          <div className="mb-12 bg-gray-900 rounded-lg p-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+              <div>
+                <h3 className="text-gold font-semibold mb-2 text-sm uppercase tracking-wide">Client</h3>
+                <p className="text-white text-sm">{project.client_name}</p>
               </div>
-
-              {/* Results/Metrics */}
-              {project.results_metrics && (
-                <div className="mb-12 bg-gray-900 p-8 rounded-lg">
-                  <h2 className="text-2xl font-playfair font-bold text-white mb-4">Results</h2>
-                  <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-                    {project.results_metrics}
-                  </p>
-                </div>
-              )}
-
-              {/* Client Testimonial */}
-              {project.testimonial && (
-                <div className="mb-12 border-l-4 border-gold pl-8">
-                  <blockquote className="text-lg text-gray-300 italic mb-4">
-                    "{project.testimonial}"
-                  </blockquote>
-                  {project.testimonial_author && (
-                    <cite className="text-gold font-semibold">
-                      — {project.testimonial_author}
-                    </cite>
-                  )}
-                </div>
-              )}
-
-              {/* Additional Images */}
-              {project.additional_images && project.additional_images.length > 0 && (
-                <div className="mb-12">
-                  <h2 className="text-2xl font-playfair font-bold text-white mb-6">Project Gallery</h2>
-                  <ProjectImageGallery images={project.additional_images} title={project.title} />
-                </div>
-              )}
-
-              {/* Extra Notes */}
-              {project.extra_notes && (
-                <div className="mb-12">
-                  <h2 className="text-2xl font-playfair font-bold text-white mb-4">Additional Notes</h2>
-                  <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-                    {project.extra_notes}
-                  </p>
-                </div>
-              )}
+              <div>
+                <h3 className="text-gold font-semibold mb-2 text-sm uppercase tracking-wide">Category</h3>
+                <p className="text-gray-300 text-sm">{project.category}</p>
+              </div>
+              <div>
+                <h3 className="text-gold font-semibold mb-2 text-sm uppercase tracking-wide">Location</h3>
+                <p className="text-gray-300 text-sm">{project.location}</p>
+              </div>
+              <div>
+                <h3 className="text-gold font-semibold mb-2 text-sm uppercase tracking-wide">Year</h3>
+                <p className="text-gray-300 text-sm">
+                  {project.project_date ? new Date(project.project_date).getFullYear() : 'N/A'}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-gold font-semibold mb-2 text-sm uppercase tracking-wide">Purpose</h3>
+                <p className="text-gray-300 text-sm">{project.purpose}</p>
+              </div>
             </div>
 
-            {/* Project Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-gray-900 p-8 rounded-lg sticky top-8">
-                {/* Client Logo */}
-                {project.client_logo_url && (
-                  <div className="mb-8 text-center">
-                    <ClientLogo
-                      logoUrl={project.client_logo_url}
-                      clientName={project.client_name}
-                      websiteUrl={project.client_website_url}
-                    />
-                  </div>
-                )}
-
-                {/* Project Meta */}
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-gold font-semibold mb-2">Client</h3>
-                    <p className="text-white">
-                      {project.client_website_url ? (
-                        <a
-                          href={project.client_website_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-gold transition-colors duration-300"
-                        >
-                          {project.client_name}
-                        </a>
-                      ) : (
-                        project.client_name
-                      )}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-gold font-semibold mb-2">Purpose</h3>
-                    <p className="text-gray-300">{project.purpose}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-gold font-semibold mb-2">Category</h3>
-                    <p className="text-gray-300">{project.category}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-gold font-semibold mb-2">Location</h3>
-                    <p className="text-gray-300">{project.location}</p>
-                  </div>
-
-                  {project.project_date && (
-                    <div>
-                      <h3 className="text-gold font-semibold mb-2">Year</h3>
-                      <p className="text-gray-300">{new Date(project.project_date).getFullYear()}</p>
-                    </div>
-                  )}
-
-                  <div>
-                    <h3 className="text-gold font-semibold mb-2">Services</h3>
-                    <div className="flex flex-wrap gap-1">
-                      {project.services.map((service, index) => (
-                        <span
-                          key={index}
-                          className="bg-gray-800 text-gray-300 px-2 py-1 text-xs rounded-sm"
-                        >
-                          {service}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA Button */}
-                <div className="mt-8 pt-6 border-t border-gray-800">
-                  <Link
-                    href="/contact"
-                    className="block w-full bg-gold hover:bg-gold/90 text-black font-semibold px-6 py-3 rounded-sm text-center transition-all duration-300"
+            {/* Services - Show all services */}
+            <div className="mt-4 text-center">
+              <h3 className="text-gold font-semibold mb-3 text-sm uppercase tracking-wide">Services</h3>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {project.services.map((service, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-800 text-gray-300 px-3 py-1 text-xs rounded-sm"
                   >
-                    Start Your Project
-                  </Link>
-                </div>
+                    {service}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* Extra Videos Section */}
+          {(() => {
+            // Parse extra videos from extra_notes
+            const extraVideos: Array<{title: string, videoUrl: string}> = []
+
+            if (project.extra_notes && project.extra_notes.includes('Video ID:')) {
+              const lines = project.extra_notes.split('\n')
+              let currentTitle = ''
+
+              for (const line of lines) {
+                if (line.includes(' - Video ID: ')) {
+                  // Extract title
+                  const titleMatch = line.match(/(.+?) - Video ID:/)
+                  if (titleMatch) {
+                    currentTitle = titleMatch[1].replace(/^\d+\.\s*/, '').trim()
+                  }
+                } else if (line.includes('https://iframe.videodelivery.net/') && currentTitle && !line.includes('Main Interview')) {
+                  extraVideos.push({
+                    title: currentTitle,
+                    videoUrl: line.trim()
+                  })
+                  currentTitle = ''
+                }
+              }
+            }
+
+            if (extraVideos.length > 0) {
+              return (
+                <div className="mb-12">
+                  <h2 className="text-2xl font-playfair font-bold text-white mb-6">Extra Videos:</h2>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {extraVideos.map((video, index) => (
+                      <ProjectVideoPlayer
+                        key={index}
+                        videoUrl={video.videoUrl}
+                        title={video.title}
+                        isMain={false}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+            return null
+          })()}
         </div>
       </section>
+
+      {/* Project Overview Section - After extra videos, before gallery */}
+      <section className="py-16 bg-gray-950">
+        <div className="container max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl font-playfair font-bold text-white mb-8 text-center">Project Overview</h2>
+          <div className="prose prose-invert max-w-none">
+            <p className="text-gray-300 leading-relaxed text-lg whitespace-pre-line text-center">
+              {project.full_description}
+            </p>
+          </div>
+
+          {/* Results/Metrics */}
+          {project.results_metrics && (
+            <div className="mt-12 bg-gray-900 p-8 rounded-lg">
+              <h3 className="text-xl font-playfair font-bold text-white mb-4 text-center">Results</h3>
+              <p className="text-gray-300 leading-relaxed whitespace-pre-line text-center">
+                {project.results_metrics}
+              </p>
+            </div>
+          )}
+
+          {/* Client Testimonial */}
+          {project.testimonial && (
+            <div className="mt-12 border-l-4 border-gold pl-8 max-w-3xl mx-auto">
+              <blockquote className="text-lg text-gray-300 italic mb-4 text-center">
+                "{project.testimonial}"
+              </blockquote>
+              {project.testimonial_author && (
+                <cite className="text-gold font-semibold block text-center">
+                  — {project.testimonial_author}
+                </cite>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Photo Gallery Section - AFTER project overview - Only Supabase images */}
+      {(() => {
+        // Filter to only show Supabase images (photos), not Cloudflare video links
+        const photoImages = project.additional_images?.filter(img =>
+          img.includes('supabase.co') && !img.includes('iframe.videodelivery.net')
+        ) || []
+
+        if (photoImages.length > 0) {
+          return (
+            <section className="py-16 bg-black">
+              <div className="container max-w-6xl mx-auto px-6">
+                <h2 className="text-3xl font-playfair font-bold text-white mb-8 flex items-center gap-3">
+                  <span className="text-gold">📸</span> Project Gallery
+                </h2>
+                <ProjectImageGallery images={photoImages} title={project.title} />
+              </div>
+            </section>
+          )
+        }
+        return null
+      })()}
+
     </main>
   )
 }
