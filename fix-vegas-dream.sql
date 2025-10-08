@@ -41,7 +41,7 @@ INSERT INTO portfolio_projects (
     'https://customer-bt0bzj0ogm4g5mbc.cloudflarestream.com/a3cd0eb92f95b9b5bef859c197a91465/manifest/video.m3u8',
     'https://customer-bt0bzj0ogm4g5mbc.cloudflarestream.com/a3cd0eb92f95b9b5bef859c197a91465/thumbnails/thumbnail.jpg?time=5s',
     'https://customer-bt0bzj0ogm4g5mbc.cloudflarestream.com/a3cd0eb92f95b9b5bef859c197a91465/thumbnails/thumbnail.jpg?time=5s',
-    'https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/SweetDreamsMusicLogo.png',
+    'https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsmusiclogo.png',
     false,
     true
 );

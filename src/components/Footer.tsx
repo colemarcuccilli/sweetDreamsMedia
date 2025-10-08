@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="md:col-span-2">
             <div className="mb-6">
               <img 
-                src="https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png" 
+                src="https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png" 
                 alt="Sweet Dreams Production" 
                 className="h-10 w-auto mb-4"
               />

@@ -13,12 +13,12 @@ WHERE title LIKE '%Sweet Dreams Recording Studio%' OR title LIKE '%Recording Stu
 
 -- 3. Add Sweet Dreams Prod logo to Cumberland Falls project
 UPDATE portfolio_projects 
-SET client_logo_url = 'https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png'
+SET client_logo_url = 'https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png'
 WHERE title LIKE '%Cumberland Falls%';
 
 -- 4. Add Sweet Dreams Prod logo to Vegas Dream project
 UPDATE portfolio_projects 
-SET client_logo_url = 'https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png'
+SET client_logo_url = 'https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png'
 WHERE title LIKE '%Vegas Dream%';
 
 -- 4. VERIFY ALL UPDATES

@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     siteName: "Sweet Dreams Production",
     images: [
       {
-        url: "https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png",
+        url: "https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png",
         width: 1200,
         height: 630,
         alt: "Sweet Dreams Production - Video Production Company",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sweet Dreams Production | Cinematic Content That Converts",
     description: "Masters of cinematic content and 2025 social media strategy. Premium B2B video production for ambitious brands.",
-    images: ["https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png"],
+    images: ["https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png"],
   },
   verification: {
     google: "your-google-verification-code",
@@ -101,8 +101,8 @@ export default function RootLayout({
             "name": "Sweet Dreams Production",
             "description": "Masters of cinematic content and 2025 social media strategy. Premium B2B video production company.",
             "url": "https://sweetdreamsprod.com",
-            "logo": "https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png",
-            "image": "https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png",
+            "logo": "https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png",
+            "image": "https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png",
             "telephone": "+1-260-450-7739",
             "email": "jayvalleo@sweetdreamsmusic.com",
             "address": {

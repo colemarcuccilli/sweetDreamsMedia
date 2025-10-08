@@ -32,7 +32,7 @@ export default function StickyNav() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <img 
-              src="https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetDreamsProdlogo.png" 
+              src="https://fweeyjnqwxywmpmnqpts.supabase.co/storage/v1/object/public/media/logos/sweetdreamsprodlogo.png" 
               alt="Sweet Dreams Production" 
               className="h-8 w-auto"
             />
